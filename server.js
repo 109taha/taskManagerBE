@@ -4,7 +4,8 @@ require("dotenv").config();
 const connectDB = require("./helper/databaseConnection");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+
+// ✅ CORS setup
 app.use(
   cors({
     origin: [
@@ -14,22 +15,37 @@ app.use(
     credentials: true,
   })
 );
+
+// ✅ Body parser
 app.use(express.json());
 
+// ✅ Connect DB before handling routes (for Vercel functions)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("DB connection failed:", error);
+    res.status(500).json({ message: "Database connection error" });
+  }
+});
+
+// ✅ Test routes
+app.get("/", (req, res) => {
+  res.send("Task Management System Backend is running ✅");
+});
+
 app.post("/check", (req, res) => {
-  console.log(req.body); // make sure JSON parsing works
+  console.log(req.body);
   res.json({ message: "POST received", data: req.body });
 });
 
-// Sample route
-app.get("/", (req, res) => {
-  res.send("Task Management System Backend is running");
-});
-
+// ✅ Your routes
 app.use("/user", require("./routes/userRoutes"));
 app.use("/task", require("./routes/taskRoutes"));
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  connectDB();
-});
+// ❌ Do NOT use app.listen() — Vercel handles this
+// app.listen(PORT, () => { ... });
+
+// ✅ Instead, export the app for Vercel
+module.exports = app;
