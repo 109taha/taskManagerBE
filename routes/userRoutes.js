@@ -16,4 +16,8 @@ router.get("/profile", authenticateToken, getUserById);
 // Update user profile
 router.put("/profile", authenticateToken, updateUser);
 
+router.get("/users", (req, res) => {
+  res.send("User route is working");
+});
+
 module.exports = router;
