@@ -16,6 +16,11 @@ app.use(
 );
 app.use(express.json());
 
+app.post("/check", (req, res) => {
+  console.log(req.body); // make sure JSON parsing works
+  res.json({ message: "POST received", data: req.body });
+});
+
 // Sample route
 app.get("/", (req, res) => {
   res.send("Task Management System Backend is running");
