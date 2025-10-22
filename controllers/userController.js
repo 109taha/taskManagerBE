@@ -37,6 +37,7 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+    console.log("user", user);
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -45,7 +46,7 @@ exports.loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
     console.log("beforeTOken");
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id }, "process.env.JWT_SECRET", {
       expiresIn: "1h",
     });
     console.log("afterTOken");
